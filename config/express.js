@@ -9,7 +9,8 @@ var express = require('express'),
 	consolidate = require('consolidate'),
 	swig = require('swig'),
 	path = require('path'),
-	utilities = require('./utilities');
+	utilities = require('./utilities'),
+  lessMiddleware = require('less-middleware');
 
 module.exports = function(db) {
 	// Initialize express app
@@ -107,6 +108,11 @@ module.exports = function(db) {
 	// routes should be at the last
 	app.use(app.router);
 
+  // Less middleware to compile css assets on the fly for development
+    app.use(lessMiddleware(config.root + '/app/assets',
+      { dest: config.root + '/public' }
+    ));
+
 	// Setting the app router and static folder
 	app.use(express.static(config.root + '/public'));
 
@@ -138,6 +144,7 @@ module.exports = function(db) {
 			error: 'Not Found'
 		});
 	});
+
 
 	return app;
 };
